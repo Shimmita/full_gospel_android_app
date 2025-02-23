@@ -1,20 +1,24 @@
 package com.shimmita.full_gospel.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.shimmita.full_gospel.R
 
@@ -36,36 +39,36 @@ data class DrawerActivities(
 
 val activityList = listOf(
     DrawerActivities(
-        activityName = "Today's Prayer",
+        activityName = "Post Prayer of the Day",
         activityIcon = R.drawable.baseline_self_improvement_24
     ),
 
     DrawerActivities(
-        activityName = "Weekly Verse",
+        activityName = "Post Verse of the Week",
         activityIcon = R.drawable.baseline_menu_book_24
     ),
     DrawerActivities(
-        activityName = "Testimony",
+        activityName = "Post and Share Testimony",
         activityIcon = R.drawable.baseline_emoji_people_24
     ),
 
     DrawerActivities(
-        activityName = "Announcement",
+        activityName = "Post About Announcement",
         activityIcon = R.drawable.baseline_notification_add_24
     ),
 
     DrawerActivities(
-        activityName = "Add Event",
+        activityName = "Post About Event or Mission",
         activityIcon = R.drawable.baseline_event_available_24
     ),
 
     DrawerActivities(
-        activityName = "Nature Talent",
+        activityName = "Post About Naturing of Talent",
         activityIcon = R.drawable.baseline_queue_music_24
     ),
 
     DrawerActivities(
-        activityName = "Last Sunday Remarks",
+        activityName = "Post About Last Sunday Service",
         activityIcon = R.drawable.baseline_church_24
     ),
 
@@ -75,24 +78,26 @@ val activityList = listOf(
 fun DrawerScreen() {
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .fillMaxHeight()
+            .fillMaxWidth(.8f)
+            .verticalScroll(rememberScrollState())
+            .background(color = MaterialTheme.colorScheme.surfaceContainerHigh),
         verticalArrangement = Arrangement.Center
 
     ) {
 
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(start = 5.dp)
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(start = 50.dp)
         ) {
             Image(
                 painter = painterResource(R.drawable.apostle),
                 contentDescription = "image",
                 Modifier
                     .clip(CircleShape)
-                    .size(100.dp)
+                    .size(160.dp)
                     .border(
                         width = 1.5.dp,
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -100,58 +105,58 @@ fun DrawerScreen() {
                     ),
                 contentScale = ContentScale.Crop
             )
+            Text(
+                text = "church apostle",
+                modifier = Modifier.padding(top = 5.dp)
+            )
+            Text(
+                text = "+2541234567890",
+                modifier = Modifier.padding(bottom = 5.dp, top = 5.dp)
+            )
 
-            Column(modifier = Modifier.padding(start = 20.dp)) {
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            Text(
+                text = "Apostle David Uche",
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.padding(3.dp))
+            Text(
+                text = "daviduche@gmail.com",
+            )
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            Button(onClick = {}) {
                 Text(
-                    text = "David Uche",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "Church Apostle", modifier = Modifier.padding(top = 5.dp))
-                Text(text = "+254123456789", modifier = Modifier.padding(top = 5.dp))
-                Text(
-                    text = "Daviduche@gmail.com",
-                    modifier = Modifier.padding(bottom = 5.dp, top = 5.dp)
+                    text = "Update Details",
                 )
             }
+
+
         }
 
-        OutlinedButton(
-            onClick = {},
-            modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-        ) {
-            Text(text = "update profile")
-        }
+        HorizontalDivider(Modifier.padding(20.dp))
 
-        Spacer(modifier = Modifier.padding(30.dp))
-
-        Text(
-            text = "Post An Activity",
-            modifier = Modifier
-                .align(alignment = Alignment.CenterHorizontally), fontWeight = FontWeight.Bold
-        )
-
-
-        Spacer(modifier = Modifier.padding(10.dp))
-
-
-        activityList.forEach { it ->
+        activityList.forEach {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 10.dp)
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .clickable {
+
+                    }
             ) {
                 Icon(
                     painter = painterResource(it.activityIcon),
                     contentDescription = it.activityName,
                     modifier = Modifier
                         .padding(10.dp)
-                        .size(30.dp), tint = MaterialTheme.colorScheme.primary
+                        .size(20.dp), tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
                     text = it.activityName,
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(start = 20.dp)
                 )
             }

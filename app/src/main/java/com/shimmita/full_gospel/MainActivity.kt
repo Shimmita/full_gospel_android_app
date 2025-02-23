@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -83,13 +82,12 @@ class MainActivity : ComponentActivity() {
                     ),
                 )
 
+
                 ModalNavigationDrawer(
                     drawerContent = {
                         DrawerScreen()
-
                     },
                     drawerState = drawerState,
-                    scrimColor = MaterialTheme.colorScheme.surfaceDim
                 ) {
                     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
                         StarterTopBar(bellIconClicked = {
