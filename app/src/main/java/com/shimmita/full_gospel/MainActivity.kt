@@ -34,11 +34,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.shimmita.full_gospel.routing.ScreenRoutes
+import com.shimmita.full_gospel.screens.AllMembersView
+import com.shimmita.full_gospel.screens.AnnouncePost
+import com.shimmita.full_gospel.screens.DailyPrayerPost
 import com.shimmita.full_gospel.screens.DrawerScreen
+import com.shimmita.full_gospel.screens.EventMissionPost
+import com.shimmita.full_gospel.screens.EventsMissionView
+import com.shimmita.full_gospel.screens.LastSundayPost
+import com.shimmita.full_gospel.screens.LiveStreamView
+import com.shimmita.full_gospel.screens.NatureTalentPost
 import com.shimmita.full_gospel.screens.NavItems
+import com.shimmita.full_gospel.screens.NotificationView
 import com.shimmita.full_gospel.screens.RegistrationScreen
 import com.shimmita.full_gospel.screens.StarterScreen
 import com.shimmita.full_gospel.screens.StarterTopBar
+import com.shimmita.full_gospel.screens.TestimonyPost
+import com.shimmita.full_gospel.screens.WeeklyVersePost
 import com.shimmita.full_gospel.ui.theme.Full_GospelTheme
 import kotlinx.coroutines.launch
 
@@ -60,55 +71,46 @@ class MainActivity : ComponentActivity() {
                     NavItems(
                         title = "Home",
                         selectedIcon = R.drawable.baseline_home_24,
-                        unselectedIcon = R.drawable.outline_home_24
+                        unselectedIcon = R.drawable.outline_home_24,
+                        routePath = ScreenRoutes.Home
                     ),
                     NavItems(
                         title = "Members",
                         selectedIcon = R.drawable.baseline_group_24,
-                        unselectedIcon = R.drawable.outline_group_24
+                        unselectedIcon = R.drawable.outline_group_24,
+                        routePath = ScreenRoutes.Members
                     ),
 
 
                     NavItems(
                         title = "Events",
                         selectedIcon = R.drawable.baseline_event_available_24,
-                        unselectedIcon = R.drawable.outline_event_available_24
+                        unselectedIcon = R.drawable.outline_event_available_24,
+                        routePath = ScreenRoutes.EventMissionView
                     ),
 
                     NavItems(
                         title = "Our TV",
                         selectedIcon = R.drawable.baseline_live_tv_24,
-                        unselectedIcon = R.drawable.baseline_live_tv_24
+                        unselectedIcon = R.drawable.baseline_live_tv_24,
+                        routePath = ScreenRoutes.LiveTV
                     ),
                 )
 
 
                 ModalNavigationDrawer(
                     drawerContent = {
-                        DrawerScreen()
+                        DrawerScreen(drawerState, navController, handleAlterNavIndex = {
+                            currentItemIndex = 5
+                        })
                     },
                     drawerState = drawerState,
                 ) {
                     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
                         StarterTopBar(bellIconClicked = {
-                            coroutineScope.launch {
-                                val result = snackBarHostState.showSnackbar(
-                                    message = getString(R.string.login_or_register_to_access),
-                                    actionLabel = getString(R.string.login),
-                                    duration = SnackbarDuration.Short
-                                )
-
-                                when (result) {
-                                    SnackbarResult.Dismissed -> {
-
-                                    }
-
-                                    SnackbarResult.ActionPerformed -> {
-                                        navController.navigate(route = ScreenRoutes.Login)
-
-                                    }
-                                }
-                            }
+                            navController.navigate(route = ScreenRoutes.Notification)
+                            //alter the index of bottom nav to highest value
+                            currentItemIndex = 5
                         }, registerAccountClicked = {
                             //alter the state of an index to the highest value for nav no focused
                             currentItemIndex = 4
@@ -128,30 +130,29 @@ class MainActivity : ComponentActivity() {
                                     //update the index
                                     currentItemIndex = index
 
-                                    //home screen is by default can be accessed logged in or not
-                                    if (navItem.title == ScreenRoutes.Home) {
-                                        navController.navigate(route = ScreenRoutes.Home)
-                                    } else {
+                                    //navigate to screens clicked. consider protecting all except home
+                                    navController.navigate(route = navItem.routePath)
 
-                                        //if the user not logged in display snack for them to login
-                                        coroutineScope.launch {
-                                            val result = snackBarHostState.showSnackbar(
-                                                message = getString(R.string.login_or_register_to_access),
-                                                actionLabel = getString(R.string.login),
-                                                duration = SnackbarDuration.Short
-                                            )
 
-                                            when (result) {
-                                                SnackbarResult.Dismissed -> {
+                                    //if the user not logged in display snack for them to login
+//                                    coroutineScope.launch {
+//                                        val result = snackBarHostState.showSnackbar(
+//                                            message = getString(R.string.login_or_register_to_access),
+//                                            actionLabel = getString(R.string.login),
+//                                            duration = SnackbarDuration.Short
+//                                        )
+//
+//                                        when (result) {
+//                                            SnackbarResult.Dismissed -> {
+//
+//                                            }
+//
+//                                            SnackbarResult.ActionPerformed -> {
+//                                                navController.navigate(route = ScreenRoutes.Login)
+//                                            }
+//                                        }
+//                                    }
 
-                                                }
-
-                                                SnackbarResult.ActionPerformed -> {
-                                                    navController.navigate(route = ScreenRoutes.Login)
-                                                }
-                                            }
-                                        }
-                                    }
 
                                 }, icon = {
                                     Icon(
@@ -181,6 +182,52 @@ class MainActivity : ComponentActivity() {
                                 StarterScreen()
                             }
 
+                            composable(route = ScreenRoutes.Announce) {
+                                AnnouncePost()
+                            }
+
+                            composable(route = ScreenRoutes.DailyPrayer) {
+                                DailyPrayerPost()
+                            }
+
+                            composable(route = ScreenRoutes.EventMission) {
+                                EventMissionPost()
+                            }
+
+                            composable(route = ScreenRoutes.NatureTalent) {
+                                NatureTalentPost()
+                            }
+
+                            composable(route = ScreenRoutes.ShareTestimony) {
+                                TestimonyPost()
+                            }
+
+                            composable(route = ScreenRoutes.WeeklyVerse) {
+                                WeeklyVersePost()
+                            }
+
+                            composable(route = ScreenRoutes.LastSunday) {
+                                LastSundayPost()
+                            }
+
+                            composable(route = ScreenRoutes.Notification) {
+                                NotificationView()
+                            }
+
+                            composable(route = ScreenRoutes.Members) {
+                                AllMembersView()
+                            }
+
+                            composable(route = ScreenRoutes.EventMissionView) {
+                                EventsMissionView()
+                            }
+
+                            composable(route = ScreenRoutes.LiveTV) {
+                                LiveStreamView()
+                            }
+
+
+
                             composable(route = ScreenRoutes.Register) {
                                 RegistrationScreen(handleNavigateLogin = {
                                     navController.navigate(route = ScreenRoutes.Login)
@@ -191,6 +238,7 @@ class MainActivity : ComponentActivity() {
                                 LoginScreen(handleNavigateRegistration = {
                                     navController.navigate(route = ScreenRoutes.Register)
                                 })
+
                             }
                         }
                     }

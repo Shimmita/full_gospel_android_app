@@ -455,6 +455,7 @@ fun StarterTopBar(
 data class NavItems(
     val title: String,
     val selectedIcon: Int,
-    val unselectedIcon: Int
+    val unselectedIcon: Int,
+    val routePath: String
 )
 

@@ -6,6 +6,14 @@ object ScreenRoutes {
     val Notification: String = "Notification"
     val Login: String = "Login"
     val Members: String = "Members"
-    val MissionS: String = "Missions"
+    val EventMissionView: String = "Missions"
     val LiveTV: String = "LiveTV"
+    val DailyPrayer: String = "Daily-Prayer"
+    val WeeklyVerse: String = "Weekly-Verse"
+    val ShareTestimony: String = "Share-Testimony"
+    val Announce: String = "Announce"
+    val EventMission: String = "Event-Mission"
+    val NatureTalent: String = "Nature-Talent"
+    val LastSunday: String = "Last-Sunday"
+
 }
