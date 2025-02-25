@@ -1,9 +1,13 @@
 package com.shimmita.full_gospel.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -15,6 +19,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -34,16 +39,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.shimmita.full_gospel.R
+import com.shimmita.full_gospel.firebase.FirebaseConfig
 
 @Composable
-fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
+fun RegistrationScreen(
+    handleNavigateLogin: () -> Unit,
+    handleRegistrationSuccess: () -> Unit,
+    handleRegistrationFailed: () -> Unit
+) {
     var emailText by remember { mutableStateOf("") }
+    var passwordText by remember { mutableStateOf("") }
     var nameText by remember { mutableStateOf("") }
     var phoneText by remember { mutableStateOf("") }
     var genderText by remember { mutableStateOf("") }
-    var passwordText by remember { mutableStateOf("") }
+    var selectedRole by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
+    var isProcessing by remember { mutableStateOf(false) }
+
 
     val roleText = listOf(
         "Apostle",
@@ -63,8 +79,7 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
         "Instrumentalist",
     )
 
-    // Create a string value to store the selected city
-    var selectedRole by remember { mutableStateOf("") }
+
 
 
     Column(
@@ -77,19 +92,25 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
 
         Text(
             text = "ACCOUNT REGISTRATION",
-            modifier = Modifier.padding(bottom = 15.dp),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleMedium
         )
 
+        Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
 
         Text(
             text = "VICTORY BELONGS TO JESUS",
-            modifier = Modifier.padding(bottom = 5.dp),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodySmall
 
         )
+
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
+
+
+
+
         Text(
             text = "~ Claim your victory today ~",
             style = MaterialTheme.typography.bodySmall
@@ -104,7 +125,9 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
             Icon(imageVector = Icons.Filled.Create, contentDescription = "Name")
         }, placeholder = {
             Text(text = "Alice Kawira")
-        }, modifier = Modifier.padding(bottom = 10.dp))
+        }, enabled = !isProcessing)
+
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
 
 
@@ -116,8 +139,9 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
             Icon(imageVector = Icons.Filled.Call, contentDescription = "Phone")
         }, placeholder = {
             Text(text = "+2547123456789")
-        }, modifier = Modifier.padding(bottom = 10.dp))
+        }, enabled = !isProcessing)
 
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
 
         OutlinedTextField(value = genderText, onValueChange = {
@@ -128,9 +152,10 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
             Icon(imageVector = Icons.Filled.Face, contentDescription = "Gender")
         }, placeholder = {
             Text(text = "Male or Female")
-        }, modifier = Modifier.padding(bottom = 10.dp))
+        }, enabled = !isProcessing)
 
 
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
 
         OutlinedTextField(value = emailText, onValueChange = {
@@ -141,7 +166,9 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
             Icon(imageVector = Icons.Filled.Email, contentDescription = "Email")
         }, placeholder = {
             Text(text = "annabelle@gmail.com")
-        }, modifier = Modifier.padding(bottom = 10.dp))
+        }, enabled = !isProcessing)
+
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
 
         OutlinedTextField(value = passwordText, onValueChange = {
@@ -155,7 +182,9 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
             )
         }, placeholder = {
             Text(text = "*******")
-        }, modifier = Modifier.padding(bottom = 10.dp))
+        }, enabled = !isProcessing)
+
+        Spacer(modifier = Modifier.padding(vertical = 7.dp))
 
 
         OutlinedTextField(
@@ -171,7 +200,7 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
                 }
             },
             readOnly = true, // Prevent manual input
-            singleLine = true
+            singleLine = true, enabled = !isProcessing
         )
 
         DropdownMenu(
@@ -196,19 +225,89 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
         }
 
 
+        Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
+
+
         Button(
             onClick = {
-                handLeRegister(
-                    nameText,
-                    phoneText,
-                    genderText,
-                    emailText,
-                    passwordText,
-                    selectedRole
-                )
+                // processing true
+                isProcessing = true
+                //instantiate fbAuth
+                val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+                //init firestore
+                val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+                firebaseAuth.signInWithEmailAndPassword(emailText, passwordText)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            Log.d("Reg", "RegistrationScreen: success->email+pass ")
+                            // proceed save user in firestore
+                            val currentUserID = firebaseAuth.currentUser?.uid
+
+                            val nameKey = "Name"
+                            val phoneKey = "Phone"
+                            val genderKey = "Gender"
+                            val roleKey = "Role"
+
+                            //hashmap
+                            val hashmapMembers = hashMapOf(
+                                nameKey to nameText,
+                                phoneKey to phoneText,
+                                genderKey to genderText,
+                                roleKey to roleText
+                            )
+
+                            //proceed saving user details in the firestore collection/userID
+                            if (currentUserID != null) {
+                                fireStore.collection(FirebaseConfig.fireStoreCollection)
+                                    .document(currentUserID).set(hashmapMembers)
+                                    .addOnCompleteListener { storeResponse ->
+                                        if (storeResponse.isSuccessful) {
+
+                                            Log.d(
+                                                "Reg",
+                                                "RegistrationScreen: success->firestore->all done "
+                                            )
+
+
+                                            //false is processing
+                                            isProcessing = false
+                                            //navigate to login
+                                            handleRegistrationSuccess.invoke()
+                                        }
+
+                                        if (!storeResponse.isSuccessful) {
+
+                                            Log.d(
+                                                "Reg",
+                                                "RegistrationScreen: failed->firestore->all done "
+                                            )
+
+                                            //false is processing
+                                            isProcessing = false
+                                            //invoke the failed fun at the parent level
+                                            handleRegistrationFailed.invoke()
+                                        }
+                                    }
+                            }
+
+                        }
+
+                        //failed at register email and password
+                        if (!it.isSuccessful) {
+                            Log.d("Reg", "RegistrationScreen: failed->email+pass->all done ")
+
+                            //false is processing
+                            isProcessing = false
+                            //invoke the failed fun at the parent level
+                            handleRegistrationFailed.invoke()
+                        }
+                    }
+
             },
-            modifier = Modifier.padding(top = 10.dp),
-            enabled = nameText.isNotEmpty() && phoneText.isNotEmpty() && genderText.isNotEmpty() && emailText.isNotEmpty() && passwordText.isNotEmpty() && selectedRole.isNotEmpty()
+            modifier = Modifier.padding(),
+            enabled = nameText.isNotEmpty() && phoneText.isNotEmpty() && genderText.isNotEmpty() && emailText.isNotEmpty() && passwordText.isNotEmpty() && selectedRole.isNotEmpty() && !isProcessing
         ) {
             Text(
                 text = "Click Me To Register",
@@ -216,31 +315,37 @@ fun RegistrationScreen(handleNavigateLogin: () -> Unit) {
         }
 
 
-        TextButton(onClick = { handleNavigateLogin.invoke() }) {
+        TextButton(onClick = { handleNavigateLogin.invoke() }, enabled = !isProcessing) {
             Text(
                 text = "Back to Login",
             )
         }
 
 
+        Spacer(modifier = Modifier.padding(5.dp))
+        //progress dialog is processing
+        if (isProcessing) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+
+                ) {
+                CircularProgressIndicator(modifier = Modifier.size(25.dp))
+
+            }
+        }
+
+
     }
-}
-
-fun handLeRegister(
-    nameText: String,
-    phoneText: String,
-    genderText: String,
-    emailText: String,
-    passwordText: String,
-    selectedRole: String
-) {
-
-
 }
 
 
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 private fun RegisterPreview() {
-    RegistrationScreen { }
+    RegistrationScreen(
+        handleNavigateLogin = {},
+        handleRegistrationSuccess = {},
+        handleRegistrationFailed = {}
+    )
 }

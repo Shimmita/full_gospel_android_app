@@ -2,6 +2,7 @@ package com.shimmita.full_gospel
 
 import LoginScreen
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,10 +15,8 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.getValue
@@ -27,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Full_GospelTheme {
-
+                val context = LocalContext.current
                 val navController = rememberNavController()
                 val coroutineScope = rememberCoroutineScope()
                 val snackBarHostState = remember { SnackbarHostState() }
@@ -229,14 +229,35 @@ class MainActivity : ComponentActivity() {
 
 
                             composable(route = ScreenRoutes.Register) {
-                                RegistrationScreen(handleNavigateLogin = {
-                                    navController.navigate(route = ScreenRoutes.Login)
-                                })
+                                RegistrationScreen(
+                                    handleNavigateLogin = {
+                                        navController.navigate(route = ScreenRoutes.Login)
+                                    },
+                                    handleRegistrationSuccess = {
+                                        //navigate login screen
+                                        navController.navigate(route = ScreenRoutes.Login)
+                                        navController.popBackStack()
+                                    },
+                                    handleRegistrationFailed = {
+                                        Toast.makeText(
+                                            context,
+                                            "Registration Failed",
+                                            Toast.LENGTH_LONG
+                                        )
+                                            .show()
+                                    }
+                                )
                             }
 
                             composable(route = ScreenRoutes.Login) {
                                 LoginScreen(handleNavigateRegistration = {
                                     navController.navigate(route = ScreenRoutes.Register)
+                                }, handleNavigateHomeLoginSuccess = {
+                                    navController.navigate(route = ScreenRoutes.Home)
+                                    navController.popBackStack()
+                                }, handleLoginFailed = {
+                                    Toast.makeText(context, "Login Failed", Toast.LENGTH_LONG)
+                                        .show()
                                 })
 
                             }
