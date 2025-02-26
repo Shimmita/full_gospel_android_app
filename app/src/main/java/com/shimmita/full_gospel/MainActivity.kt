@@ -74,6 +74,7 @@ class MainActivity : ComponentActivity() {
                         unselectedIcon = R.drawable.outline_home_24,
                         routePath = ScreenRoutes.Home
                     ),
+
                     NavItems(
                         title = "Members",
                         selectedIcon = R.drawable.baseline_group_24,
@@ -183,31 +184,46 @@ class MainActivity : ComponentActivity() {
                             }
 
                             composable(route = ScreenRoutes.Announce) {
-                                AnnouncePost()
+                                AnnouncePost(handleNavigateAnnouncement = {
+                                    navController.navigate(route = ScreenRoutes.Notification)
+                                })
                             }
 
                             composable(route = ScreenRoutes.DailyPrayer) {
-                                DailyPrayerPost()
+                                DailyPrayerPost(handleNavigateHome = {
+                                    navController.navigate(route = ScreenRoutes.Home)
+                                })
                             }
 
                             composable(route = ScreenRoutes.EventMission) {
-                                EventMissionPost()
+                                EventMissionPost(handleNavigateHome = {
+                                    navController.navigate(route = ScreenRoutes.Home)
+                                })
                             }
 
                             composable(route = ScreenRoutes.NatureTalent) {
-                                NatureTalentPost()
+                                NatureTalentPost(handleNavigateHome = {
+                                    navController.navigate(route = ScreenRoutes.Home)
+                                })
                             }
 
                             composable(route = ScreenRoutes.ShareTestimony) {
-                                TestimonyPost()
+                                TestimonyPost(handleNavigateHome = {
+                                    navController.navigate(route = ScreenRoutes.Home)
+                                })
                             }
 
                             composable(route = ScreenRoutes.WeeklyVerse) {
-                                WeeklyVersePost()
+                                WeeklyVersePost(handleNavigateHome = {
+                                    navController.navigate(route = ScreenRoutes.Home)
+                                })
                             }
 
                             composable(route = ScreenRoutes.LastSunday) {
-                                LastSundayPost()
+                                LastSundayPost(handleNavigateHome = {
+                                    navController.navigate(route = ScreenRoutes.Home)
+
+                                })
                             }
 
                             composable(route = ScreenRoutes.Notification) {

@@ -390,7 +390,7 @@ fun StarterTopBar(
 
     TopAppBar(title = {
         Text(
-            "Full Gospel Church".uppercase(), style = MaterialTheme.typography.titleMedium
+            "Full Gospel Ministry".uppercase(), style = MaterialTheme.typography.titleMedium
         )
     }, actions = {
 
