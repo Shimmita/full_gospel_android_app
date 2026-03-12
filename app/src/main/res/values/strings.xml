@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Full_Gospel</string>
+    <string name="app_name">Church</string>
     <string name="login">login</string>
     <string name="login_or_register_to_access">login or register to access</string>
+    <string name="title_activity_details">DetailsActivity</string>
 </resources>

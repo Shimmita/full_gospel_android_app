@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    implementation (libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -60,4 +60,16 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.material3)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.ui)
+    implementation(libs.coil.compose)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.okhttp)
+    implementation (libs.logging.interceptor)
+    implementation (libs.gson)
+    implementation(platform(libs.androidx.compose.bom.v20241000))
+    implementation(libs.androidx.foundation)
 }

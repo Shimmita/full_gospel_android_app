@@ -2,11 +2,10 @@ package com.shimmita.full_gospel.routing
 
 object ScreenRoutes {
     val Home: String = "Home"
-    val Register: String = "Register"
     val Notification: String = "Notification"
-    val Login: String = "Login"
     val Members: String = "Members"
     val EventMissionView: String = "Missions"
+    val DetailsView: String = "Details"
     val LiveTV: String = "LiveTV"
     val DailyPrayer: String = "Daily-Prayer"
     val WeeklyVerse: String = "Weekly-Verse"
